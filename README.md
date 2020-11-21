@@ -1,4 +1,4 @@
 ## Compile
 `mvn clean install`
 ## Run server
-`mvn install exec:java -Dexec.mainClass=com.addressbook.AddressBookServer`
+`mvn clean install exec:java -Dexec.mainClass=com.addressbook.AddressBookServer`
