@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package com.addressbook;
+option java_multiple_files = true;
+
+enum PhoneType {
+  HOME = 0;
+  WORK = 1;
+  MOBILE = 2;
+}
+
+message ContactRequest {
+  string name = 1;
+  repeated string phoneList = 2;
+  int32 number = 3;
+  string street = 4;
+  PhoneType phoneType = 5;
+  map<string, string> coordinates = 6;
+}
+
+message ContactResponse {
+   string code = 1;
+}
+
+service AddressBookService {
+  rpc getContact(ContactRequest) returns (ContactResponse);
+}
