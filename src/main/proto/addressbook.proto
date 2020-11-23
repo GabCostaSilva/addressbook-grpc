@@ -19,9 +19,13 @@ message ContactRequest {
 }
 
 message ContactResponse {
-   string code = 1;
+    string result = 1;
+    string code = 2;
 }
 
 service AddressBookService {
-  rpc getContact(ContactRequest) returns (ContactResponse);
+  rpc getContact(ContactRequest) returns (ContactResponse) {};
+  rpc GetListContact(ContactRequest) returns (stream ContactResponse) {};
+  rpc AddListContact(stream ContactRequest) returns (ContactResponse) {};
+  rpc AddMultipleContact(stream ContactRequest) returns (stream ContactResponse) {};
 }
