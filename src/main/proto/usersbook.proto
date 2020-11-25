@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package com.usersbook;
+option java_multiple_files = true;
+
+message User {
+  string name = 1;
+  string cpf = 2;
+  int32 idade = 3;
+  string telefone = 4;
+  string email = 5;
+}
+
+message UserRequest {
+  User user = 1;
+}
+
+message UserResponse {
+    string result = 1;
+    string code = 2;
+}
+
+service UsersBookService {
+
+  /** Unário **/
+  rpc getUser(UserRequest) returns (UserResponse) {};
+  rpc createUser(UserRequest) returns (UserResponse) {};
+
+  /** Stream Server **/
+  /** Retorna vários usuários como resposta **/
+  rpc getListUser(UserRequest) returns (stream UserResponse) {};
+
+  /** Stream Client **/
+  /** Envia vários usuários como requisição **/
+  rpc addListUser(stream UserRequest) returns (UserResponse) {};
+
+}

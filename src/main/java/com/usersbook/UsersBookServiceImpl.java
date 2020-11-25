@@ -1,12 +1,13 @@
-package com.addressbook;
+package com.usersbook;
 
 import io.grpc.stub.StreamObserver;
+import java.io.*;
 
-public class AddressBookServiceImpl extends AddressBookServiceGrpc.AddressBookServiceImplBase {
+public class UsersBookServiceImpl extends UsersBookServiceGrpc.UsersBookServiceImplBase {
     @Override
-    public void getContact(ContactRequest request, StreamObserver<ContactResponse> responseObserver) {
+    public void getUser(UserRequest request, StreamObserver<UserResponse> responseObserver) {
         System.out.println(request);
-        responseObserver.onNext(ContactResponse.newBuilder()
+        responseObserver.onNext(UserResponse.newBuilder()
                 .setResult("Resultado do unário")
                 .setCode("200")
                 .build());
@@ -15,8 +16,20 @@ public class AddressBookServiceImpl extends AddressBookServiceGrpc.AddressBookSe
     }
 
     @Override
-    public void getListContact(ContactRequest request, StreamObserver<ContactResponse> responseObserver) {
-        ContactResponse response = ContactResponse.newBuilder()
+    public void createUser(UserRequest request, StreamObserver<UserResponse> responseObserver) {
+        System.out.println(request);
+        responseObserver.onNext(UserResponse.newBuilder()
+                .setResult("Resultado do unário")
+                .setCode("200")
+                .build());
+        
+        // calling onNext multiples times in unary request throws runtime exception
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getListUser(UserRequest request, StreamObserver<UserResponse> responseObserver) {
+        UserResponse response = UserResponse.newBuilder()
             .setResult("Resultado do server stream")
             .setCode("200")
             .build();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -28,14 +41,14 @@ public class AddressBookServiceImpl extends AddressBookServiceGrpc.AddressBookSe
         responseObserver.onCompleted();
     }
 
-    public StreamObserver<ContactRequest> addListContact(StreamObserver<ContactResponse> responseObserver){
-        StreamObserver<ContactRequest> requestObserver = new StreamObserver<ContactRequest>() {
+    public StreamObserver<UserRequest> addListUser(StreamObserver<UserResponse> responseObserver){
+        StreamObserver<UserRequest> requestObserver = new StreamObserver<UserRequest>() {
 
             String result = "Hello  \n";
             @Override
-            public void onNext(ContactRequest value) {
-                result += value.getName() + "\n";
-                // ContactResponse response = ContactResponse.newBuilder()
+            public void onNext(UserRequest value) {
+                result += value.getUser().getName() + "\n";
+                // UserResponse response = UserResponse.newBuilder()
                 //         .setResult(result)
                 //         .setCode("200")
                 //         .build();
@@ -52,9 +65,9 @@ public class AddressBookServiceImpl extends AddressBookServiceGrpc.AddressBookSe
             public void onCompleted() {
                 // client is done
                 responseObserver.onNext(
-                    ContactResponse.newBuilder()
-                                .setResult(result)
-                                .build()
+                    UserResponse.newBuilder()
+                        .setResult(result)
+                        .build()
                 );
                 responseObserver.onCompleted();
             }
@@ -63,30 +76,30 @@ public class AddressBookServiceImpl extends AddressBookServiceGrpc.AddressBookSe
         return requestObserver;
     }
 
-    @Override
-    public StreamObserver<ContactRequest> addMultipleContact(StreamObserver<ContactResponse> responseObserver) {
-        StreamObserver<ContactRequest> requestObserver = new StreamObserver<ContactRequest>() {
-            @Override
-            public void onNext(ContactRequest value) {
-                String result = "Hello " + value.getName();
-                ContactResponse multipleResponse = ContactResponse.newBuilder()
-                        .setResult(result)
-                        .build();
+    // @Override
+    // public StreamObserver<UserRequest> addMultipleContact(StreamObserver<UserResponse> responseObserver) {
+    //     StreamObserver<UserRequest> requestObserver = new StreamObserver<UserRequest>() {
+    //         @Override
+    //         public void onNext(UserRequest value) {
+    //             String result = "Hello " + value.getName();
+    //             UserResponse multipleResponse = UserResponse.newBuilder()
+    //                     .setResult(result)
+    //                     .build();
 
-                responseObserver.onNext(multipleResponse);
-            }
+    //             responseObserver.onNext(multipleResponse);
+    //         }
 
-            @Override
-            public void onError(Throwable t) {
-                // do nothing
-            }
+    //         @Override
+    //         public void onError(Throwable t) {
+    //             // do nothing
+    //         }
 
-            @Override
-            public void onCompleted() {
-                responseObserver.onCompleted();
-            }
-        };
+    //         @Override
+    //         public void onCompleted() {
+    //             responseObserver.onCompleted();
+    //         }
+    //     };
 
-        return requestObserver;
-    }
+    //     return requestObserver;
+    // }
 }

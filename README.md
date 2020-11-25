@@ -1,12 +1,12 @@
 ## Compile
 `mvn clean install`
 ## Run server
-`mvn clean install exec:java -Dexec.mainClass=com.addressbook.AddressBookServer`
+`mvn clean install exec:java -Dexec.mainClass=com.usersbook.UsersBookServer`
 ## Run client
-`mvn clean package exec:java -Dexec.mainClass=com.addressbook.AddressBookClient`
+`mvn clean package exec:java -Dexec.mainClass=com.usersbook.UsersBookClient`
 
 ## RUN client without errors Threads
-`mvn clean package exec:java -Dexec.mainClass=com.addressbook.AddressBookClient -Dexec.cleanupDaemonThreads=false`
+`mvn clean package exec:java -Dexec.mainClass=com.usersbook.UsersBookClient -Dexec.cleanupDaemonThreads=false`
 
 ## BUILD IMAGE docker
 `docker build -t grpc .`
