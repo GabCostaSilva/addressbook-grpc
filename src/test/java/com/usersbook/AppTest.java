@@ -1,4 +1,4 @@
-package com.addressbook;
+package com.usersbook;
 
 import static org.junit.Assert.assertTrue;
 
