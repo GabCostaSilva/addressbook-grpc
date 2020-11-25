@@ -1,17 +1,14 @@
 
 # Pull base image.
-FROM ubuntu:20.04
+FROM alpine:3.7
 
 # Install Java.
 RUN \
-  apt-get update && \
-  apt-get -y upgrade && \ 
-  apt-get install -y openjdk-8-jdk && \
-  apt-get install -y maven && \
-  rm -rf /var/lib/apt/lists/*
+  apk add openjdk8 && \
+  apk add maven
 
 # Define commonly used JAVA_HOME variable
-ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
 ENV MAVEN_HOME /opt/maven
 
 COPY . /var/www/
