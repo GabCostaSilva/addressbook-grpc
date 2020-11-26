@@ -8,7 +8,7 @@ public class UsersBookServiceImpl extends UsersBookServiceGrpc.UsersBookServiceI
     public void getUser(UserRequest request, StreamObserver<UserResponse> responseObserver) {
         System.out.println(request);
         responseObserver.onNext(UserResponse.newBuilder()
-                .setResult("Victor Koji")
+                .setResult("Resultado do Unário")
                 .setCode("200")
                 .build());
 
@@ -19,7 +19,7 @@ public class UsersBookServiceImpl extends UsersBookServiceGrpc.UsersBookServiceI
     public void createUser(UserRequest request, StreamObserver<UserResponse> responseObserver) {
         System.out.println(request);
         responseObserver.onNext(UserResponse.newBuilder()
-                .setResult("Resultado do unário")
+                .setResult("Inserido com Sucesso!")
                 .setCode("200")
                 .build());
 
@@ -29,7 +29,7 @@ public class UsersBookServiceImpl extends UsersBookServiceGrpc.UsersBookServiceI
     @Override
     public void getListUser(UserRequest request, StreamObserver<UserResponse> responseObserver) {
         UserResponse response = UserResponse.newBuilder()
-            .setResult("Resultado do server stream")
+            .setResult("Resultado do Streaming Server")
             .setCode("200")
             .build();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 
@@ -42,7 +42,7 @@ public class UsersBookServiceImpl extends UsersBookServiceGrpc.UsersBookServiceI
 
     public StreamObserver<UserRequest> addListUser(StreamObserver<UserResponse> responseObserver){
         StreamObserver<UserRequest> requestObserver = new StreamObserver<UserRequest>() {
-
+            
             String result = "Hello  \n";
             @Override
             public void onNext(UserRequest value) {
@@ -68,31 +68,4 @@ public class UsersBookServiceImpl extends UsersBookServiceGrpc.UsersBookServiceI
 
         return requestObserver;
     }
-
-    // @Override
-    // public StreamObserver<UserRequest> addMultipleContact(StreamObserver<UserResponse> responseObserver) {
-    //     StreamObserver<UserRequest> requestObserver = new StreamObserver<UserRequest>() {
-    //         @Override
-    //         public void onNext(UserRequest value) {
-    //             String result = "Hello " + value.getName();
-    //             UserResponse multipleResponse = UserResponse.newBuilder()
-    //                     .setResult(result)
-    //                     .build();
-
-    //             responseObserver.onNext(multipleResponse);
-    //         }
-
-    //         @Override
-    //         public void onError(Throwable t) {
-    //             // do nothing
-    //         }
-
-    //         @Override
-    //         public void onCompleted() {
-    //             responseObserver.onCompleted();
-    //         }
-    //     };
-
-    //     return requestObserver;
-    // }
 }

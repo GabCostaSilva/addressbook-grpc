@@ -28,12 +28,12 @@ public class UsersBookClient {
             switch (scan.next()) {
                 /** Unário **/
                 case "1":
-                    getUserClient(channel);
+                    promptForAddUser(channel, scan, System.out);
                     break;
     
                 /** Unário **/
                 case "2":
-                    promptForAddUser(channel, scan, System.out);
+                    getUserClient(channel);
                     break;
             
                 /** Server-side streaming **/
@@ -167,7 +167,7 @@ public class UsersBookClient {
 
                 System.out.println("Recebendo resposta do servidor");
                 System.out.println(value.getResult());
-
+                
             }
 
             @Override
@@ -230,7 +230,7 @@ public class UsersBookClient {
         requestObserver.onCompleted();
 
         try {
-            latch.await(3L, TimeUnit.SECONDS);
+            latch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
