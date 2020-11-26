@@ -13,35 +13,36 @@ public class UsersBookClient {
     public static void main(String[] args) throws IOException  {
         Scanner scan = new Scanner(System.in);
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8080)
-            .usePlaintext() // no need for tls
+            .usePlaintext()
             .build();
 
         Boolean rodando = true;
         while(rodando){
             System.out.println("Selecione uma opcao: ");
-            System.out.println("1 - Add User");
-            System.out.println("2 - Lista User");
-            System.out.println("3 - Add Lista User");
+            System.out.println("1 - Adicionar usuário User");
+            System.out.println("2 - Método unário");
+            System.out.println("3 - Método Streaming Server");
+            System.out.println("4 - Método Streaming Client");
             System.out.println("exit - Sair\n");
             System.out.print("Opcao:");
             switch (scan.next()) {
                 /** Unário **/
-                // case "get":
-                //     getUserClient(channel);
-                //     break;
+                case "1":
+                    getUserClient(channel);
+                    break;
     
                 /** Unário **/
-                case "1":
+                case "2":
                     promptForAddUser(channel, scan, System.out);
                     break;
             
-                /** A server-side streaming **/
-                case "2":
+                /** Server-side streaming **/
+                case "3":
                     getListUserClient(channel);
                     break;
     
-                /** A client-side streaming **/
-                case "3":
+                /** Client-side streaming **/
+                case "4":
                     addListUserClient(channel);
                     break;
     
@@ -63,19 +64,19 @@ public class UsersBookClient {
     static void promptForAddUser(ManagedChannel channel, Scanner stdin, PrintStream stdout) throws IOException {
         User.Builder user = User.newBuilder();
 
-        stdout.print("Enter name: ");
+        stdout.print("Nome: ");
         user.setName(stdin.next());
 
-        stdout.print("Enter cpf: ");
+        stdout.print("Cpf: ");
         user.setCpf(stdin.next());
 
-        stdout.print("Enter idade: ");
+        stdout.print("Idade (numeral): ");
         user.setIdade(stdin.nextInt());
 
-        stdout.print("Enter telefone: ");
+        stdout.print("Telefone: ");
         user.setTelefone(stdin.next());
 
-        stdout.print("Enter email address (blank for none): ");
+        stdout.print("Email: ");
         String email = stdin.next();
         if(!email.isEmpty())
             user.setEmail(email);
@@ -83,8 +84,8 @@ public class UsersBookClient {
         addUserClient(channel, user);
     }
     
-    /**  **/
     private static void getUserClient(ManagedChannel channel) {
+        /** Cria um stub SÍNCRONO **/
         UsersBookServiceGrpc.UsersBookServiceBlockingStub stub = UsersBookServiceGrpc.newBlockingStub(channel);
 
         User user = User.newBuilder()
@@ -107,6 +108,7 @@ public class UsersBookClient {
 
     /** Adiciona um usuário **/
     private static void addUserClient(ManagedChannel channel, User.Builder user) throws IOException  {
+        // cria um stub SÍNCRONO
         UsersBookServiceGrpc.UsersBookServiceBlockingStub stub = UsersBookServiceGrpc.newBlockingStub(channel);
 
         /**  Monta a request **/
@@ -120,7 +122,7 @@ public class UsersBookClient {
         try {
             user.mergeFrom(new FileInputStream("Livro de Usuarios"));
         } catch (FileNotFoundException e) {
-            System.out.println("Livro de Usuarios" + ": File not found.  Creating a new file.");
+            System.out.println("Livro de Usuarios" + ": Arquivo nao encontrado.  Foi criado um novo.");
         }
 
         OutputStream output = new BufferedOutputStream(new FileOutputStream("Livro de Usuarios"));
@@ -131,6 +133,7 @@ public class UsersBookClient {
     }
 
     private static void getListUserClient(ManagedChannel channel) {
+        /** Cria um stub SÍNCRONO **/
         UsersBookServiceGrpc.UsersBookServiceBlockingStub stub = UsersBookServiceGrpc.newBlockingStub(channel);
 
         User user = User.newBuilder()
@@ -153,7 +156,7 @@ public class UsersBookClient {
     }
 
     private static void addListUserClient(ManagedChannel channel) {
-        // create an asynchronous client
+        /** Cria um stub ASSÍNCRONO **/
         UsersBookServiceGrpc.UsersBookServiceStub asyncClient = UsersBookServiceGrpc.newStub(channel);
 
         CountDownLatch latch = new CountDownLatch(1);
@@ -161,22 +164,20 @@ public class UsersBookClient {
         StreamObserver<UserRequest> requestObserver = asyncClient.addListUser(new StreamObserver<UserResponse>() {
             @Override
             public void onNext(UserResponse value) {
-                // we get a response from the server
-                System.out.println("Received a response from the server");
+
+                System.out.println("Recebendo resposta do servidor");
                 System.out.println(value.getResult());
-                // onNext will be called only once
+
             }
 
             @Override
             public void onError(Throwable t) {
-                // we get an error from the server
+                System.out.println(t.toString());
             }
 
             @Override
             public void onCompleted() {
-                // the server is done sending us data
-                // onCompleted will be called right after onNext()
-                System.out.println("Server has completed sending us something");
+                System.out.println("Servidor completou o envio dos dados");
                 latch.countDown();
             }
         });
@@ -189,28 +190,27 @@ public class UsersBookClient {
             .setEmail("grupo@gmail.com")
             .build();
 
-        // streaming message #1
+        /** Mensagem #1 **/
         System.out.println("sending message 1");
         requestObserver.onNext(UserRequest.newBuilder()
             .setUser(user)
             .build()
         );
 
-        // streaming message #2
+        /** Mensagem #2 **/
         System.out.println("sending message 2");
         requestObserver.onNext(UserRequest.newBuilder()
             .setUser(user)
             .build()
         );
 
-        // streaming message #3
+        /** Mensagem #3 **/
         System.out.println("sending message 3");
         requestObserver.onNext(UserRequest.newBuilder()
             .setUser(user)
             .build()
         );
 
-        // we tell the server that the client is done sending data
         requestObserver.onCompleted();
 
         try {
