@@ -197,17 +197,33 @@ public class UsersBookClient {
             .build()
         );
 
+        User userSecond = User.newBuilder()
+            .setName("Vânia")
+            .setCpf("111111")
+            .setIdade(30)
+            .setTelefone("32999999")
+            .setEmail("grupo@gmail.com")
+            .build();
+
         /** Mensagem #2 **/
         System.out.println("sending message 2");
         requestObserver.onNext(UserRequest.newBuilder()
-            .setUser(user)
+            .setUser(userSecond)
             .build()
         );
+
+        User userThird = User.newBuilder()
+            .setName("Ayrton")
+            .setCpf("111111")
+            .setIdade(30)
+            .setTelefone("32999999")
+            .setEmail("grupo@gmail.com")
+            .build();
 
         /** Mensagem #3 **/
         System.out.println("sending message 3");
         requestObserver.onNext(UserRequest.newBuilder()
-            .setUser(user)
+            .setUser(userThird)
             .build()
         );
 
