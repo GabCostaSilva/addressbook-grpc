@@ -6,10 +6,6 @@ import io.grpc.ServerBuilder;
 
 import java.io.IOException;
 
-/**
- * Hello world!
- *
- */
 public class UsersBookServer {
     public static void main( String[] args ) throws IOException, InterruptedException {
         Server server = ServerBuilder.forPort(8080)
@@ -17,6 +13,7 @@ public class UsersBookServer {
                 .build();
 
         server.start();
+        System.out.println("Server Started");
         server.awaitTermination();
     }
 }

@@ -8,10 +8,10 @@ public class UsersBookServiceImpl extends UsersBookServiceGrpc.UsersBookServiceI
     public void getUser(UserRequest request, StreamObserver<UserResponse> responseObserver) {
         System.out.println(request);
         responseObserver.onNext(UserResponse.newBuilder()
-                .setResult("Resultado do unário")
+                .setResult("Victor Koji")
                 .setCode("200")
                 .build());
-        // calling onNext multiples times in unary request throws runtime exception
+
         responseObserver.onCompleted();
     }
 
@@ -22,8 +22,7 @@ public class UsersBookServiceImpl extends UsersBookServiceGrpc.UsersBookServiceI
                 .setResult("Resultado do unário")
                 .setCode("200")
                 .build());
-        
-        // calling onNext multiples times in unary request throws runtime exception
+
         responseObserver.onCompleted();
     }
 
@@ -48,22 +47,16 @@ public class UsersBookServiceImpl extends UsersBookServiceGrpc.UsersBookServiceI
             @Override
             public void onNext(UserRequest value) {
                 result += value.getUser().getName() + "\n";
-                // UserResponse response = UserResponse.newBuilder()
-                //         .setResult(result)
-                //         .setCode("200")
-                //         .build();
-
-                // responseObserver.onNext(response);
             }
 
             @Override
             public void onError(Throwable t) {
-                // do nothing
+                System.out.println(t.toString());
             }
 
             @Override
             public void onCompleted() {
-                // client is done
+
                 responseObserver.onNext(
                     UserResponse.newBuilder()
                         .setResult(result)
