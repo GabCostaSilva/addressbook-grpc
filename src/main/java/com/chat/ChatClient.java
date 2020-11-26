@@ -4,10 +4,9 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class ChatClient  {
     private final String name;
@@ -16,24 +15,31 @@ public class ChatClient  {
         this.name = name;
     }
 
-    public void init(ManagedChannel channel) throws IOException {
+    public void init(ManagedChannel channel) {
+        final CountDownLatch finishLatch = new CountDownLatch(1);
         ChatServiceGrpc.ChatServiceStub asyncChatService = ChatServiceGrpc.newStub(channel);
 
         // Listens for messages coming from the client
         StreamObserver<ChatMessage> toServer = asyncChatService.chat(createObserver());
 
-        InputStream is = System.in;
-        BufferedReader br =  new BufferedReader(new InputStreamReader(is));
-        String line;
-        while ((line = br.readLine()) != null) {
-            if (line.equalsIgnoreCase("")) {
-                break;
-            }
+        Scanner in = new Scanner(System.in);
+        System.out.println("First message");
+        String msg = in.nextLine();
+        do {
+                toServer.onNext(ChatMessage.newBuilder()
+                        .setFrom(name)
+                        .setMessage(msg)
+                        .build());
+                msg = in.nextLine();
+        } while(!msg.equalsIgnoreCase("logout"));
+
+        try {
+            System.out.println("Logging out");
+            finishLatch.await(5, TimeUnit.SECONDS);
+            toServer.onCompleted();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        toServer.onNext(ChatMessage.newBuilder()
-                .setFrom(name)
-                .setMessage(line)
-                .build());
     }
 
     private StreamObserver<ChatMessageFromServer> createObserver() {
@@ -57,9 +63,10 @@ public class ChatClient  {
         };
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args)  {
         ChatClient chatClient = new ChatClient(System.getProperty("username"));
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8080).usePlaintext().build();
+        System.out.println("Chat started");
         chatClient.init(channel);
     }
 }

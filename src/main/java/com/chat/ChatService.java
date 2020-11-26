@@ -1,6 +1,5 @@
 package com.chat;
 
-import com.addressbook.AddressBookServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -9,7 +8,7 @@ import java.io.IOException;
 import java.util.LinkedHashSet;
 
 public class ChatService extends ChatServiceGrpc.ChatServiceImplBase{
-    private static LinkedHashSet<StreamObserver<ChatMessageFromServer>> observers = new LinkedHashSet<>();
+    private static final LinkedHashSet<StreamObserver<ChatMessageFromServer>> observers = new LinkedHashSet<>();
 
     @Override
     public StreamObserver<ChatMessage> chat(StreamObserver<ChatMessageFromServer> responseObserver) {
@@ -19,6 +18,7 @@ public class ChatService extends ChatServiceGrpc.ChatServiceImplBase{
             //Client sends request
             @Override
             public void onNext(ChatMessage chatMessageFromClient) {
+                System.out.printf("%s sent a message\n", chatMessageFromClient.getFrom());
                 ChatMessageFromServer msg = ChatMessageFromServer.newBuilder()
                         .setMessage(chatMessageFromClient)
                         .build();
@@ -45,6 +45,7 @@ public class ChatService extends ChatServiceGrpc.ChatServiceImplBase{
                 .build();
 
         server.start();
+        System.out.println("Server started");
         server.awaitTermination();
     }
 }
